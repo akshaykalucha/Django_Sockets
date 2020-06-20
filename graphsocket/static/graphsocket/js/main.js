@@ -3,7 +3,7 @@
 let ws = new WebSocket('ws://localhost:8000/ws/polData/')
 
 ws.onopen = function (e){
-    alert('connection established')
+    // alert('connection established')
 }
 
 ws.onmessage = function (e) {
@@ -17,7 +17,7 @@ ws.onmessage = function (e) {
 }
 
 ws.onclose = function (e){
-    alert('Conn Closed')
+    // alert('Conn Closed')
 }
 
 var dataObject = {
