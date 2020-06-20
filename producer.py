@@ -1,0 +1,23 @@
+import json
+import requests
+import asyncio
+import websockets, websocket
+import redis
+import random, time
+
+# async def producer(url):
+#     async with websockets.connect(url) as websocket:
+#         for i in range(1000):
+#             time.sleep(3)
+#             msg  = json.dumps({'value': random.randint(1,100)})
+#             await websocket.send(msg)
+
+
+# asyncio.get_event_loop().run_until_complete(producer("ws://localhost:8000/ws/polData/"))
+
+ws = websocket.WebSocket()
+
+ws.connect("ws://localhost:8000/ws/polData/")
+for i in range(1000):
+    time.sleep(3)
+    ws.send(json.dumps({'value': random.randint(1,100)}))
