@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
+    'personalchat.apps.PersonalchatConfig',
     'graphsocket.apps.GraphsocketConfig',
     'django.contrib.admin',
     'django.contrib.auth',
