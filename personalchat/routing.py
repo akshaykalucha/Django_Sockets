@@ -4,5 +4,5 @@ from . import consumer
 from django.urls import re_path
 
 websocket_urlpatterns = [
-    # path('ws/chat/<int:personId>/', consumer.ChatConsumer)
+    path('ws/chat/me/<int:personId>/', consumer.ChatConsumer)
 ]

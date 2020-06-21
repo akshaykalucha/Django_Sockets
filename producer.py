@@ -21,3 +21,13 @@ ws.connect("ws://localhost:8000/ws/polData/")
 for i in range(1000):
     time.sleep(3)
     ws.send(json.dumps({'value': random.randint(1,100)}))
+
+# import binascii
+
+# arr = bytes("hello world", 'ascii')
+# print(arr)
+# newarr = bin(int(binascii.hexlify(arr),16))
+# for byte in arr:
+#     print(byte)
+
+# print(newarr)
