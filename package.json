@@ -1,0 +1,23 @@
+{
+  "name": "dcgraph",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akshaykalucha3/Django_Sockets.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akshaykalucha3/Django_Sockets/issues"
+  },
+  "homepage": "https://github.com/akshaykalucha3/Django_Sockets#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "crypto-js": "^4.0.0"
+  }
+}

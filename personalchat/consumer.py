@@ -16,9 +16,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
         print(channel_layer)
-        print(self.scope['user'], 'this is user')
         self.room_name = self.scope['url_route']['kwargs']['personId']
         self.room_group_name = 'chat_%s' % self.room_name
+        print(self.room_group_name)
         channelInfo = {
             f"channel:{self.room_name}": self.channel_name
         }
@@ -45,32 +45,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        channelList = []
-        channelList.append(str(self.channel_name))
-        print(channelList)
-        print(self.channel_layer, "this is chbannel layer")
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        channelName = text_data_json['channel']
-        print(channelName, "this is recieved channel name")
+        try:
+            channelId = text_data_json['channelId']
+            print(channelId, "received from admin")
+        except:
+            pass
+        # channelName = text_data_json['channel']
+        # print(channelName, "this is recieved channel name")
         encmsg = bytes(message, 'ascii')
         bin(int(binascii.hexlify(encmsg),16))
         print(encmsg)
         # Send message to room group
+        # await self.channel_layer.send(
+        #     channelName,
+        #     {
+        #         'type': 'chat_message',
+        #         'message': message
+        #     }
+        # )
         await self.channel_layer.send(
-            channelName,
+            self.channel_name,
             {
                 'type': 'chat_message',
                 'message': message
             }
         )
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'chat_message',
+        #         'message': message
+        #     }
+        # )
 
     # Receive message from room group
     async def chat_message(self, event):
