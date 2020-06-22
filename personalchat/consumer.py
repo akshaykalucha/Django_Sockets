@@ -3,14 +3,26 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 import binascii
+from channels.layers import get_channel_layer
+import redis
 # from asgiref.sync import async_to_sync
 # from channels.generic.websocket import WebsocketConsumer
+
+r = redis.Redis()
+
+channel_layer = get_channel_layer()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
+        print(channel_layer)
+        print(self.scope['user'], 'this is user')
         self.room_name = self.scope['url_route']['kwargs']['personId']
         self.room_group_name = 'chat_%s' % self.room_name
+        channelInfo = {
+            f"channel:{self.room_name}": self.channel_name
+        }
+        r.hmset("channels", channelInfo)
 
         # Join room group
         await self.channel_layer.group_add(
@@ -24,6 +36,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Leave room group
+        print("leaving channelllll")
+        r.hdel("channels", f"channel:{self.room_name}")
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -45,6 +59,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to room group
         await self.channel_layer.send(
             channelName,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
+        await self.channel_layer.group_send(
+            self.room_group_name,
             {
                 'type': 'chat_message',
                 'message': message
