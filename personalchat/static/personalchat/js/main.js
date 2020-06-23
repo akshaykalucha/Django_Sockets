@@ -22,7 +22,7 @@ chatsocket.onmessage = function(e) {
     }
     else if(data.message){
         document.querySelector('#chat-log').value += (data.message + '\n');
-    }        
+    }
 };
 
 chatsocket.onclose = function(e) {
@@ -74,7 +74,7 @@ function makeid(length) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
- }
+}
  
 
 document.querySelector('#chat-message-submit').onclick = function(e) {
