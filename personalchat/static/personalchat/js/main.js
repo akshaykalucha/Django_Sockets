@@ -1,4 +1,4 @@
-console.log("js loaded")
+console.log("js loaded for user")
 
 const ID = JSON.parse(document.getElementById('id').textContent);
 
@@ -14,7 +14,6 @@ const chatsocket = new WebSocket(
 
 chatsocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    console.log('------------------------------------------------------------------')
     console.log(data, "received from admin")
     if(data.message.adminMessage){
         Cookies.set('foo', data.message.from)

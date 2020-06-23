@@ -5,6 +5,7 @@ from rest_framework import generics
 from django.views.generic import ListView
 from .models import *
 from rest_framework.response import Response
+from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from django.utils.datastructures import MultiValueDictKeyError
 import datetime

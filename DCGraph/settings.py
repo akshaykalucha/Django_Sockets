@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 'ws4redis',
     'channels',
     'rest_framework',
     'personalchat.apps.PersonalchatConfig',
@@ -56,6 +57,21 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'DCGraph.urls'
+# WEBSOCKET_URL = '/ws/'
+
+# WS4REDIS_CONNECTION = {
+#     'host': 'localhost',
+#     'port': 6379,
+#     'db': 0,
+# }
+
+# WS4REDIS_PREFIX = 'ws'
+
+
+# WS4REDIS_EXPIRE = 7200
+
+# WS4REDIS_SUBSCRIBER = 'myapp.subscriber.RedisSubscriber'
+
 
 TEMPLATES = [
     {
@@ -99,7 +115,10 @@ CHANNEL_LAYERS = {
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication', ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
 }
 
 SIMPLE_JWT = {
