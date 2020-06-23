@@ -14,15 +14,18 @@ channel_layer = get_channel_layer()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     
+    #connecting to channel
+    
     async def connect(self):
-        print(channel_layer)
         self.room_name = self.scope['url_route']['kwargs']['personId']
         self.room_group_name = 'chat_%s' % self.room_name
-        print(self.room_group_name)
+
+        # creating a feild value pair and adding to redis hash
         channelInfo = {
             f"channel:{self.room_name}": self.channel_name
         }
         r.hmset("channels", channelInfo)
+
 
         # Join room group
         await self.channel_layer.group_add(
@@ -30,37 +33,54 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        print(self.channel_name)
-        
         await self.accept()
 
+
+
     async def disconnect(self, close_code):
+
         # Leave room group
-        print("leaving channelllll")
+        #deleting that channels feild from redis
         r.hdel("channels", f"channel:{self.room_name}")
+
+        #removing channel from group
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
 
-    # Receive message from WebSocket
+
     async def receive(self, text_data):
+        # Receive message from WebSocket
+
+        #receiving json data
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         try:
+
+            #if message is received by admin
             if text_data_json['type'] == 'byAdmin':
+
+                
+                #getting all channels in redis hash
                 allChannels = r.hgetall('channels')
                 for key, value in allChannels.items():
                     if value.decode("utf8") == self.channel_name:
                         myChannelName = key.decode("utf8")
+                
+                #sending this dic to user containing my chnnl id for user to refer which admin it received message from
                 messagetosend = {
                     "message": message,
                     "from": myChannelName
                 }
+
+                #getting users channel id from json
                 channelId = text_data_json['channelId']
-                print(channelId, "received from admin")
+
+                #getting channel value of users ID
                 usertosend = r.hget("channels", f"channel:{channelId}")
-                print(usertosend, "message will be sent here")
+
+                #sending message to users channel and myself
                 await self.channel_layer.send(
                     usertosend.decode("utf8"),
                     {
@@ -77,13 +97,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'message': message
                     })
                 return
+
+
+            #if message is received from user
             if text_data_json['type'] == 'byUser':
-                print(message, "messahe by user")
-                print(text_data_json['sendToAdmin'], 'recieved channel from user sending to amdin')
                 try:
+
+                    #getting admins channel value from channelId received in json
                     usertosend = r.hget("channels", text_data_json['sendToAdmin'])
                 except:
                     usertosend = None
+
+                #sending message to myself and admin
                 await self.channel_layer.send(
                 self.channel_name,
                 {
@@ -98,26 +123,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 })
         except:
             pass
-        # channelName = text_data_json['channel']
-        # print(channelName, "this is recieved channel name")
-        # encmsg = bytes(message, 'ascii')
-        # bin(int(binascii.hexlify(encmsg),16))
-        # print(encmsg)
-        # Send message to room group
-        # await self.channel_layer.send(
-        #     channelName,
-        #     {
-        #         'type': 'chat_message',
-        #         'message': message
-        #     }
-        # )
-        # await self.channel_layer.group_send(
-        #     self.room_group_name,
-        #     {
-        #         'type': 'chat_message',
-        #         'message': message
-        #     }
-        # )
+
 
     # Receive message from room group
     async def chat_message(self, event):
