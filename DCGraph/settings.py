@@ -149,6 +149,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
+# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+
 
 LANGUAGE_CODE = 'en-us'
 

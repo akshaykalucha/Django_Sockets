@@ -78,6 +78,7 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
     console.log(channelName)
     var binarybyte = string2Bin(encmsg)
     chatsocket.send(JSON.stringify({
+        'type': 'byAdmin',
         'message': message,
         'channelId': ID
     }));

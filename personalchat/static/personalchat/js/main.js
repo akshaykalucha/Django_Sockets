@@ -14,7 +14,15 @@ const chatsocket = new WebSocket(
 
 chatsocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    document.querySelector('#chat-log').value += (data.message + '\n');
+    console.log('------------------------------------------------------------------')
+    console.log(data, "received from admin")
+    if(data.message.adminMessage){
+        Cookies.set('foo', data.message.from)
+        document.querySelector('#chat-log').value += (data.message.adminMessage + '\n');
+    }
+    else if(data.message){
+        document.querySelector('#chat-log').value += (data.message + '\n');
+    }        
 };
 
 chatsocket.onclose = function(e) {
@@ -92,14 +100,16 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
     channelName = btoa(channelName)
     console.log(channelName)
     var binarybyte = string2Bin(encmsg)
+    if(Cookies.get('foo')){
+        channelVal = Cookies.get('foo')
+    }
+    else{
+        channelVal = null
+    }
     chatsocket.send(JSON.stringify({
         'message': message,
+        'type': 'byUser',
+        'sendToAdmin': channelVal
     }));
-    console.log(
-        JSON.stringify({
-            'message': message,
-            "channel": channelName
-        })
-    )
     messageInputDom.value = '';
 };

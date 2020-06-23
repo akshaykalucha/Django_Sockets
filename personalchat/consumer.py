@@ -48,15 +48,61 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         try:
-            channelId = text_data_json['channelId']
-            print(channelId, "received from admin")
+            if text_data_json['type'] == 'byAdmin':
+                allChannels = r.hgetall('channels')
+                for key, value in allChannels.items():
+                    if value.decode("utf8") == self.channel_name:
+                        myChannelName = key.decode("utf8")
+                messagetosend = {
+                    "message": message,
+                    "from": myChannelName
+                }
+                channelId = text_data_json['channelId']
+                print(channelId, "received from admin")
+                usertosend = r.hget("channels", f"channel:{channelId}")
+                print(usertosend, "message will be sent here")
+                await self.channel_layer.send(
+                    usertosend.decode("utf8"),
+                    {
+                        'type': 'chat_message',
+                        'message': {
+                            "adminMessage": message,
+                            "from": myChannelName
+                        }
+                    })
+                await self.channel_layer.send(
+                    self.channel_name,
+                    {
+                        'type': 'chat_message',
+                        'message': message
+                    })
+                return
+            if text_data_json['type'] == 'byUser':
+                print(message, "messahe by user")
+                print(text_data_json['sendToAdmin'], 'recieved channel from user sending to amdin')
+                try:
+                    usertosend = r.hget("channels", text_data_json['sendToAdmin'])
+                except:
+                    usertosend = None
+                await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': 'chat_message',
+                    'message': message
+                })
+                await self.channel_layer.send(
+                usertosend.decode("utf8"),
+                {
+                    'type': 'chat_message',
+                    "message": message,
+                })
         except:
             pass
         # channelName = text_data_json['channel']
         # print(channelName, "this is recieved channel name")
-        encmsg = bytes(message, 'ascii')
-        bin(int(binascii.hexlify(encmsg),16))
-        print(encmsg)
+        # encmsg = bytes(message, 'ascii')
+        # bin(int(binascii.hexlify(encmsg),16))
+        # print(encmsg)
         # Send message to room group
         # await self.channel_layer.send(
         #     channelName,
@@ -65,13 +111,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #         'message': message
         #     }
         # )
-        await self.channel_layer.send(
-            self.channel_name,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
         # await self.channel_layer.group_send(
         #     self.room_group_name,
         #     {

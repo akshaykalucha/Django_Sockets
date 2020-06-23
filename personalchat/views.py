@@ -8,9 +8,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.datastructures import MultiValueDictKeyError
 import datetime
+from http import cookies
 import requests
 import random
+from django.conf import settings
 import redis
+import jwt
 import string
 import random
 import http
@@ -42,10 +45,30 @@ class sendSocketRes(APIView):
         password_characters = string.ascii_letters + string.digits + string.punctuation
         return ''.join(random.choice(password_characters) for i in range(random.randint(10,20)))
 
+    def test_cookie_parameters(self):
+            key = 'some_cookie'
+            value = 'some_value'
+            secure = True
+            domain = 'test.com'
+            rest = {'HttpOnly': True}
+
+            jar = requests.cookies.RequestsCookieJar()
+            jar.set(key, value, secure=secure, domain=domain, rest=rest)
+
+            assert len(jar) == 1
+            assert 'some_cookie' in jar
+
+            cookie = list(jar)[0]
+            assert cookie.secure == secure
+            assert cookie.domain == domain
+            assert cookie._rest['HttpOnly'] == rest['HttpOnly']
+
     def post(self, request, *args, **kwargs):
         r = redis.Redis()
         dic = {
             "Type": "Success",
             "Message": self.randomString(),
         }
-        return Response(data=dic, status=status.HTTP_202_ACCEPTED)
+        response = Response(data=dic, status=status.HTTP_202_ACCEPTED)
+        response.set_cookie('last_connection', datetime.datetime.now(), httponly=True, samesite='Lax')
+        return response
