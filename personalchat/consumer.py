@@ -68,6 +68,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         pendingMsgList = []
                         for message in usermssgs:
                             pendingMsgList.append((message).decode("utf8"))
+                            r.lpop(f"user:{channelId}")
                         if len(pendingMsgList) >= 1:
                             print('there are pending messages')
                             await self.channel_layer.send(
@@ -128,7 +129,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     usertosend = None
                 if text_data_json['sendToAdmin'] == None:
                     print(message, "for admin null")
-                    r.lpush(f"user:{userId}", f"{message}")
+                    r.rpush(f"user:{userId}", f"{message}")
                     print("No admin connected to this user")
                     await self.channel_layer.send(
                         self.channel_name,
