@@ -40,6 +40,7 @@ def admin(request, id):
     })
 
 
+
 class sendSocketRes(APIView):
 
     def randomString(self):
@@ -72,4 +73,23 @@ class sendSocketRes(APIView):
         }
         response = Response(data=dic, status=status.HTTP_202_ACCEPTED)
         response.set_cookie('last_connection', datetime.datetime.now(), httponly=True, samesite='Lax')
+        return response
+
+
+
+
+class pendingMessages(APIView):
+
+    def randomString(self):
+        password_characters = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(random.choice(password_characters) for i in range(random.randint(10,20)))
+
+    def post(self, request, *args, **kwargs):
+        r = redis.Redis()
+        dic = {
+            "Type": "Success",
+            "Message": self.randomString(),
+        }
+        response = Response(data=dic, status=status.HTTP_202_ACCEPTED)
+        #response.set_cookie('last_connection', datetime.datetime.now(), httponly=True, samesite='Lax')
         return response

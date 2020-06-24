@@ -60,8 +60,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             #if message is received by admin
             if text_data_json['type'] == 'byAdmin':
-
-                
+                #getting users channel id from json
+                channelId = text_data_json['channelId']
+                try:
+                    if text_data_json['message'] == 'sendPrevMessages':
+                        usermssgs = r.lrange(f"user:{channelId}", 0, -1)
+                        pendingMsgList = []
+                        for message in usermssgs:
+                            pendingMsgList.append((message).decode("utf8"))
+                        if len(pendingMsgList) >= 1:
+                            print('there are pending messages')
+                            await self.channel_layer.send(
+                                self.channel_name,
+                                {
+                                    'type': 'chat_message',
+                                    'message': pendingMsgList
+                                })
+                            return
+                        elif len(pendingMsgList) <= 0:
+                            print("No user Messages")
+                        #print(pendingMsgList)
+                        return
+                except:
+                    pass
                 #getting all channels in redis hash
                 allChannels = r.hgetall('channels')
                 for key, value in allChannels.items():
@@ -73,9 +94,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "message": message,
                     "from": myChannelName
                 }
-
-                #getting users channel id from json
-                channelId = text_data_json['channelId']
 
                 #getting channel value of users ID
                 usertosend = r.hget("channels", f"channel:{channelId}")
@@ -118,7 +136,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             'type': 'adminDiss_message',
                             'myMsg':{
                                 'data': message,
-                                'imp': 'userDisconnected'
+                                'imp': 'AdminDisconnected delete cookies'
                             }
                         }
                     )

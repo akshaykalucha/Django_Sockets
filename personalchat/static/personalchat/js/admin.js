@@ -11,10 +11,30 @@ const chatsocket = new WebSocket(
     + '/'
 )
 
+var sent = 0
+chatsocket.onopen = function(e){
+    if(sent===0){
+        chatsocket.send(JSON.stringify({
+            'type': 'byAdmin',
+            'message': 'sendPrevMessages',
+            'channelId': ID
+        }));
+        sent += 1
+    }
+}
 
 
 chatsocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
+    console.log(data.message)
+    if(Array.isArray(data.message)){
+        for(var i = 0; i<= data.message.length - 1; i++){
+            console.log(data.message[i])
+            document.querySelector('#chat-log').value += (data.message[i] + '\n');
+        }
+        console.log("array received")
+        return
+    }
     document.querySelector('#chat-log').value += (data.message + '\n');
 };
 
@@ -71,7 +91,7 @@ function makeid(length) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
- }
+}
  
 
 document.querySelector('#chat-message-submit').onclick = function(e) {

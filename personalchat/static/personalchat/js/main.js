@@ -19,7 +19,7 @@ chatsocket.onmessage = function(e) {
         if(data.myMsg.data){
             document.querySelector('#chat-log').value += (data.myMsg.data + '\n');
             if(data.myMsg.imp){
-                console.log('delete cookies')
+                console.log(data.myMsg.imp)
             }
         }
     }catch{
