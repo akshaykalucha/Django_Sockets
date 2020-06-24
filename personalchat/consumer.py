@@ -43,6 +43,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #deleting that channels feild from redis
         r.hdel("channels", f"channel:{self.room_name}")
 
+        #try delete channel pending chat if any from redis
+        try:
+            r.delete(f"user:{self.room_name}")
+        except:
+            pass
+
         #removing channel from group
         await self.channel_layer.group_discard(
             self.room_group_name,
