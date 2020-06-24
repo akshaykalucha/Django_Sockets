@@ -101,19 +101,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             #if message is received from user
             if text_data_json['type'] == 'byUser':
+                userId = self.room_name
                 try:
 
                     #getting admins channel value from channelId received in json
                     usertosend = r.hget("channels", text_data_json['sendToAdmin'])
                 except:
                     usertosend = None
-
+                if text_data_json['sendToAdmin'] == None:
+                    print(message, "for admin null")
+                    r.lpush(f"user:{userId}", f"{message}")
+                    print("No admin connected to this user")
+                    await self.channel_layer.send(
+                        self.channel_name,
+                        {
+                            'type': 'adminDiss_message',
+                            'myMsg':{
+                                'data': message,
+                                'imp': 'userDisconnected'
+                            }
+                        }
+                    )
+                    return
                 #sending message to myself and admin
+                print(usertosend, "message will be sent to this user")
                 await self.channel_layer.send(
                 self.channel_name,
                 {
-                    'type': 'chat_message',
-                    'message': message
+                    'type': 'adminDiss_message',
+                    'myMsg':{
+                        'data': message,
+                    }
                 })
                 await self.channel_layer.send(
                 usertosend.decode("utf8"),
@@ -132,4 +150,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message
+        }))
+
+
+    async def adminDiss_message(self, event):
+        message = event['myMsg']
+        await self.send(text_data=json.dumps({
+            'myMsg': message
         }))

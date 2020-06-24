@@ -15,12 +15,23 @@ const chatsocket = new WebSocket(
 chatsocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     console.log(data, "received from admin")
-    if(data.message.adminMessage){
-        Cookies.set('foo', data.message.from)
-        document.querySelector('#chat-log').value += (data.message.adminMessage + '\n');
+    try{
+        if(data.myMsg.data){
+            document.querySelector('#chat-log').value += (data.myMsg.data + '\n');
+            if(data.myMsg.imp){
+                console.log('delete cookies')
+            }
+        }
+    }catch{
+        console.log("")
     }
-    else if(data.message){
-        document.querySelector('#chat-log').value += (data.message + '\n');
+    try{
+        if(data.message.adminMessage){
+            Cookies.set('foo', data.message.from)
+            document.querySelector('#chat-log').value += (data.message.adminMessage + '\n');
+        }
+    }catch{
+        console.log("")
     }
 };
 
