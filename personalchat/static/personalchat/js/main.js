@@ -16,11 +16,12 @@ chatsocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     console.log(data, "received from admin")
     try{
-        if(data.myMsg.data){
+        if(data.myMsg.data==="Admin disconnected"){
+            document.cookie = `foo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/chat/me/${ID}/; samesite=Strict; priority=High`;
+            console.log("deleting cookie of amdin")
+        }else if(data.myMsg.data){
             document.querySelector('#chat-log').value += (data.myMsg.data + '\n');
-            if(data.myMsg.imp){
-                console.log(data.myMsg.imp)
-            }
+            return
         }
     }catch{
         console.log("")

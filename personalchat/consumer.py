@@ -61,10 +61,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'type': 'adminDiss_message',
                         'myMsg':{
                             'data': "Admin disconnected",
-                            'imp': 'AdminDisconnected delete cookies'
                         }
                     }
                 )
+                r.delete(f"AdminLog{self.room_name}")
 
 
         except:
@@ -193,7 +193,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             'type': 'adminDiss_message',
                             'myMsg':{
                                 'data': message,
-                                'imp': 'AdminDisconnected delete cookies'
                             }
                         }
                     )
