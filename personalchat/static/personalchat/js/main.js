@@ -28,6 +28,9 @@ chatsocket.onmessage = function(e) {
     try{
         if(data.message.adminMessage){
             Cookies.set('foo', data.message.from)
+            if(data.message.adminMessage === "Admin connected"){
+                return
+            }
             document.querySelector('#chat-log').value += (data.message.adminMessage + '\n');
         }
     }catch{

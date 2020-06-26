@@ -68,6 +68,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if text_data_json['type'] == 'byAdmin':
                 #getting users channel id from json
                 channelId = text_data_json['channelId']
+
+                #getting channel value of users ID
+                usertosend = r.hget("channels", f"channel:{channelId}")
+
+
+                #getting all channels in redis hash
+                allChannels = r.hgetall('channels')
+                for key, value in allChannels.items():
+                    if value.decode("utf8") == self.channel_name:
+                        myChannelName = key.decode("utf8")
+
+
                 try:
                     if text_data_json['message'] == 'sendPrevMessages':
                         usermssgs = r.lrange(f"user:{channelId}", 0, -1)
@@ -83,6 +95,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                     'type': 'chat_message',
                                     'message': pendingMsgList
                                 })
+
+                            await self.channel_layer.send(
+                                usertosend.decode("utf8"),
+                                {
+                                    'type': 'chat_message',
+                                    'message': {
+                                        "adminMessage": "Admin connected",
+                                        "from": myChannelName
+                                    }
+                                })
+
+
                             return
                         elif len(pendingMsgList) <= 0:
                             print("No user Messages")
@@ -90,11 +114,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         return
                 except:
                     pass
-                #getting all channels in redis hash
-                allChannels = r.hgetall('channels')
-                for key, value in allChannels.items():
-                    if value.decode("utf8") == self.channel_name:
-                        myChannelName = key.decode("utf8")
+
                 
                 #sending this dic to user containing my chnnl id for user to refer which admin it received message from
                 messagetosend = {
@@ -102,8 +122,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "from": myChannelName
                 }
 
-                #getting channel value of users ID
-                usertosend = r.hget("channels", f"channel:{channelId}")
 
                 #sending message to users channel and myself
                 await self.channel_layer.send(
