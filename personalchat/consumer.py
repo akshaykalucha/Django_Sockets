@@ -15,6 +15,8 @@ channel_layer = get_channel_layer()
 class ChatConsumer(AsyncWebsocketConsumer):
     
     #connecting to channel
+
+    AdminRecordID = None
     
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['personId']
@@ -43,6 +45,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #deleting that channels feild from redis
         r.hdel("channels", f"channel:{self.room_name}")
 
+        #Check if person is a admin
+        try:
+            print("searchingfor amdin")
+            adminchannel = r.get(f"AdminLog{self.room_name}")
+            print(adminchannel, "thisis admin")
+            if(adminchannel.decode("utf8") == self.channel_name):
+                print("admin is disconnecting")
+                print("sending connected user the message that admin is disconnecting delete cookie")
+                usertosend = r.hget("channels", f"channel:{self.AdminRecordID}")
+                print(usertosend.decode("utf8"), "sending thisuser the disconnected mesage")
+                await self.channel_layer.send(
+                    usertosend.decode("utf8"),
+                    {
+                        'type': 'adminDiss_message',
+                        'myMsg':{
+                            'data': "Admin disconnected",
+                            'imp': 'AdminDisconnected delete cookies'
+                        }
+                    }
+                )
+
+
+        except:
+            pass
+
         #try delete channel pending chat if any from redis
         try:
             r.delete(f"user:{self.room_name}")
@@ -66,8 +93,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             #if message is received by admin
             if text_data_json['type'] == 'byAdmin':
+                r.set(f"AdminLog{self.room_name}", self.channel_name)
                 #getting users channel id from json
                 channelId = text_data_json['channelId']
+                if self.AdminRecordID == None:
+                    self.AdminRecordID = channelId
+                    print(self.AdminRecordID, "setting globaluserid")
+
 
                 #getting channel value of users ID
                 usertosend = r.hget("channels", f"channel:{channelId}")
