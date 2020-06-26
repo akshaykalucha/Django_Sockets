@@ -13,6 +13,7 @@ from http import cookies
 import requests
 import random
 from django.conf import settings
+from .models import *
 import redis
 import jwt
 import string
@@ -95,3 +96,31 @@ class pendingMessages(APIView):
         response = Response(data=dic, status=status.HTTP_202_ACCEPTED)
         #response.set_cookie('last_connection', datetime.datetime.now(), httponly=True, samesite='Lax')
         return response
+
+
+class testPostgres(APIView):
+
+    def post(self, request):
+        name = request.data.get("name")
+
+        nameObjs = TestingUser.objects.get(name=name)
+        print(nameObjs.name)
+
+        dic = {
+            "Type": "Sucecss",
+            "data": nameObjs.name
+        }
+        return Response(data=dic, status=status.HTTP_200_OK)
+
+class testRedis(APIView):
+    r = redis.Redis()
+
+    def post(self, request):
+
+        name = request.data.get("name")
+        nameObjs = self.r.hget("TestingUser", "name")
+        dic = {
+            "Type": "Sucecss",
+            "data": nameObjs
+        }
+        return Response(data=dic, status=status.HTTP_200_OK)
