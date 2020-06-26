@@ -53,6 +53,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if(adminchannel.decode("utf8") == self.channel_name):
                 print("admin is disconnecting")
                 print("sending connected user the message that admin is disconnecting delete cookie")
+                r.delete(f"AdminLog{self.room_name}")
                 usertosend = r.hget("channels", f"channel:{self.AdminRecordID}")
                 print(usertosend.decode("utf8"), "sending thisuser the disconnected mesage")
                 await self.channel_layer.send(
@@ -64,7 +65,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
-                r.delete(f"AdminLog{self.room_name}")
 
 
         except:
