@@ -27,7 +27,7 @@ chatsocket.onmessage = function(e) {
     }
     try{
         if(data.message.adminMessage){
-            Cookies.set('foo', data.message.from)
+            document.cookie = `foo=${data.message.from}; path=/chat/me/${ID}/; samesite=Strict; priority=High`
             if(data.message.adminMessage === "Admin connected"){
                 return
             }
