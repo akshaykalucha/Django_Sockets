@@ -58,7 +58,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 print(usertosend.decode("utf8"), "sending thisuser the disconnected mesage")
                 await self.channel_layer.send(
                     usertosend.decode("utf8"),
-
+                    {
+                        'type': 'adminDiss_message',
+                        'myMsg':{
+                            'data': "Admin disconnected",
+                        }
+                    }
+                )
 
 
         except:
