@@ -50,23 +50,23 @@ class sendSocketRes(APIView):
         password_characters = string.ascii_letters + string.digits + string.punctuation
         return ''.join(random.choice(password_characters) for i in range(random.randint(10,20)))
 
-    # def test_cookie_parameters(self):
-    #         key = 'some_cookie'
-    #         value = 'some_value'
-    #         secure = True
-    #         domain = 'test.com'
-    #         rest = {'HttpOnly': True}
+    def test_cookie_parameters(self):
+            key = 'some_cookie'
+            value = 'some_value'
+            secure = True
+            domain = 'test.com'
+            rest = {'HttpOnly': True}
 
-    #         jar = requests.cookies.RequestsCookieJar()
-    #         jar.set(key, value, secure=secure, domain=domain, rest=rest)
+            jar = requests.cookies.RequestsCookieJar()
+            jar.set(key, value, secure=secure, domain=domain, rest=rest)
 
-    #         assert len(jar) == 1
-    #         assert 'some_cookie' in jar
+            assert len(jar) == 1
+            assert 'some_cookie' in jar
 
-    #         cookie = list(jar)[0]
-    #         assert cookie.secure == secure
-    #         assert cookie.domain == domain
-    #         assert cookie._rest['HttpOnly'] == rest['HttpOnly']
+            cookie = list(jar)[0]
+            assert cookie.secure == secure
+            assert cookie.domain == domain
+            assert cookie._rest['HttpOnly'] == rest['HttpOnly']
 
     def post(self, request, *args, **kwargs):
         r = redis.Redis()
