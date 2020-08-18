@@ -6,5 +6,5 @@ from django.urls import re_path
 websocket_urlpatterns = [
     path('ws/polData/', consumer.DataConsumer),
     # re_path(r'ws/chat/(?P<room_name>\w+)/$', consumer.ChatConsumer),
-    path('ws/chat/<room_name>/', consumer.ChatConsumer)
+    # path('ws/chat/<room_name>/', consumer.ChatConsumer)
 ]
