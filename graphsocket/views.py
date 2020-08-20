@@ -12,3 +12,10 @@ def index(request):
     response.set_cookie("serverGlobal", "this is for the website but available to all paths")
     return response
 
+def chathome(request):
+    return render(request, 'graphsocket/chathome.html')
+
+def room(request, room_name):
+    return render(request, 'graphsocket/chatroom.html', {
+        'room_name': room_name
+    })
