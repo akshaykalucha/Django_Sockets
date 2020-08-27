@@ -15,12 +15,6 @@ import random, time
 
 # asyncio.get_event_loop().run_until_complete(producer("ws://localhost:8000/ws/polData/"))
 
-ws = websocket.WebSocket()
-
-ws.connect("ws://localhost:8000/ws/polData/")
-for i in range(1000):
-    time.sleep(3)
-    ws.send(json.dumps({'value': random.randint(1,100)}))
 
 # import binascii
 
