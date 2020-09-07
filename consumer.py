@@ -16,6 +16,10 @@ async def consume(url):
 
 def log_message(msg):
     logging.info(f"{msg}")
+ws.connect("ws://localhost:8000/ws/polData/")
+for i in range(1000):
+    time.sleep(3)
+    ws.send(json.dumps({'value': random.randint(1,100)}))
 
 
 asyncio.get_event_loop().run_until_complete(consume("ws://localhost:8000/ws/polData/"))
