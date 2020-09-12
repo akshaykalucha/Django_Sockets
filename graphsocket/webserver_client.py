@@ -47,3 +47,36 @@ class API():
 
     def send_message_to_all(self, msg):
         self._multicast_(msg)
+
+
+
+
+@classmethod
+def calculate_response_key(cls, key):
+    GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+    hash = sha1(key.encode() + GUID.encode())
+    response_key = b64encode(hash.digest()).strip()
+    return response_key.decode('ASCII')
+
+def finish(self):
+    self.server._client_left_(self)
+
+
+def encode_to_UTF8(data):
+    try:
+        return data.encode('UTF-8')
+    except UnicodeEncodeError as e:
+        logger.error("Could not encode data to UTF-8 -- %s" % e)
+        return False
+    except Exception as e:
+        raise(e)
+        return False
+
+
+def try_decode_UTF8(data):
+    try:
+        return data.decode('utf-8')
+    except UnicodeDecodeError:
+        return False
+    except Exception as e:
+        raise(e)
