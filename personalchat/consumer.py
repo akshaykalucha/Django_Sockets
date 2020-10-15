@@ -7,6 +7,7 @@ from channels.layers import get_channel_layer
 import redis
 # from asgiref.sync import async_to_sync
 # from channels.generic.websocket import WebsocketConsumer
+from serializers.chat_serializers import ConvMessageSerializer
 
 r = redis.Redis()
 
@@ -232,3 +233,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'myMsg': message
         }))
+
+
+    def serialize(self, message):
+            return ConvMessageSerializer(message).data
+
+    def get_conv_room(self, pk1, pk2):
+        return Ms.get_conversation_room(pk1, pk2)
+
+
+    def send_msg(self, sender, recipient, message):
+        return Ms.send_message(sender, recipient, message)
