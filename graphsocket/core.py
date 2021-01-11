@@ -65,3 +65,57 @@ async def check_permissions(ctx, command_name) -> bool:
 
     level_permissions = ctx.bot.config["level_permissions"]
 
+    for level in PermissionLevel:
+        if level >= permission_level and level.name in level_permissions:
+            # -1 is for @everyone
+            if -1 in level_permissions[level.name] or any(
+                str(check.id) in level_permissions[level.name] for check in checkables
+            ):
+                return True
+    return False
+
+
+def thread_only():
+    """
+    A decorator that checks if the command
+    is being ran within a Modmail thread.
+    """
+
+    async def predicate(ctx):
+        """
+        Parameters
+        ----------
+        ctx : Context
+            The current discord.py `Context`.
+        Returns
+        -------
+        Bool
+            `True` if the current `Context` is within a Modmail thread.
+            Otherwise, `False`.
+        """
+        return ctx.thread is not None
+
+    predicate.fail_msg = "This is not a Modmail thread."
+    return commands.check(predicate)
+
+
+def github_token_required(ignore_if_not_heroku=False):
+    """
+    A decorator that ensures github token
+    is set
+    """
+
+    async def predicate(ctx):
+        if ignore_if_not_heroku and ctx.bot.hosting_method != HostingMethod.HEROKU:
+            return True
+        else:
+            return ctx.bot.config.get("github_token")
+
+    predicate.fail_msg = (
+        "You can only use this command if you have a "
+        "configured `GITHUB_TOKEN`. Get a "
+        "personal access token from developer settings."
+    )
+    return commands.check(predicate)
+
+
