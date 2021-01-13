@@ -154,3 +154,15 @@ def register(**args):
     if "ignore_unsafe" in args:
         del args['ignore_unsafe']
 
+    if "groups_only" in args:
+        del args['groups_only']
+
+    if "disable_errors" in args:
+        del args['disable_errors']
+
+    if "trigger_on_fwd" in args:
+        del args['trigger_on_fwd']
+
+    if pattern:
+        if not ignore_unsafe:
+            args['pattern'] = pattern.replace('^.', unsafe_pattern, 1)
