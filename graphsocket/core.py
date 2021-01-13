@@ -1,5 +1,7 @@
 from discord.ext import commands
-
+import sys
+from asyncio import create_subprocess_shell as asyncsubshell
+from asyncio import subprocess as asyncsub
 from core.models import HostingMethod, PermissionLevel, getLogger
 from os import remove
 from time import gmtime, strftime
