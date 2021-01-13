@@ -1,6 +1,10 @@
 from discord.ext import commands
 
 from core.models import HostingMethod, PermissionLevel, getLogger
+from os import remove
+from time import gmtime, strftime
+from traceback import format_exc
+
 
 logger = getLogger(__name__)
 
