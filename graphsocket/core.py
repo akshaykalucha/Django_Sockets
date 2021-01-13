@@ -148,3 +148,9 @@ def register(**args):
     if pattern is not None and not pattern.startswith('(?i)'):
         args['pattern'] = '(?i)' + pattern
 
+    if "disable_edited" in args:
+        del args['disable_edited']
+
+    if "ignore_unsafe" in args:
+        del args['ignore_unsafe']
+
