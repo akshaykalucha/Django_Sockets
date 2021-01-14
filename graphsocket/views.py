@@ -12,7 +12,8 @@ from requests_oauthlib import OAuth2Session
 
 from discord_bind.models import DiscordUser, DiscordInvite
 from discord_bind.conf import settings
-
+import logging
+logger = logging.getLogger(__name__)
 # Create your views here.
 
 def index(request):
