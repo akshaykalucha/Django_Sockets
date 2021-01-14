@@ -16,6 +16,22 @@ import logging
 logger = logging.getLogger(__name__)
 # Create your views here.
 
+def oauth_session(request, state=None, token=None):
+    if settings.DISCORD_REDIRECT_URI is not None:
+        redirect_uri = settings.DISCORD_REDIRECT_URI
+    else:
+        redirect_uri = request.build_absolute_uri(
+            reverse('discord_bind_callback'))
+    scope = (['email', 'guilds.join'] if settings.DISCORD_EMAIL_SCOPE
+             else ['identity', 'guilds.join'])
+    return OAuth2Session(settings.DISCORD_CLIENT_ID,
+                         redirect_uri=redirect_uri,
+                         scope=scope,
+                         token=token,
+                         state=state)
+
+
+
 def index(request):
     session = request.COOKIES['servercookie']
     print(session, "A cookie got by server")
