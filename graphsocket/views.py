@@ -52,6 +52,26 @@ def index(request):
     request.session['discord_bind_oauth_state'] = state
     return HttpResponseRedirect(url)
 
+@login_required
+def callback(request):
+    def decompose_data(user, token):
+        """ Extract the important details """
+        data = {
+            'uid': user['id'],
+            'username': user['username'],
+            'discriminator': user['discriminator'],
+            'email': user.get('email', ''),
+            'avatar': user.get('avatar', ''),
+            'access_token': token['access_token'],
+            'refresh_token': token.get('refresh_token', ''),
+            'scope': ' '.join(token.get('scope', '')),
+        }
+        for k in data:
+            if data[k] is None:
+                data[k] = ''
+
+
+
 def index(request):
     session = request.COOKIES['servercookie']
     print(session, "A cookie got by server")
