@@ -55,7 +55,6 @@ def index(request):
 @login_required
 def callback(request):
     def decompose_data(user, token):
-        """ Extract the important details """
         data = {
             'uid': user['id'],
             'username': user['username'],
@@ -77,7 +76,24 @@ def callback(request):
         except KeyError:
             pass
         return data
+    def bind_user(request, data):
+        uid = data.pop('uid')
+        count = DiscordUser.objects.filter(uid=uid).update(user=request.user,
+                                                           **data)
+        if count == 0:
+            DiscordUser.objects.create(uid=uid,
+                                       user=request.user,
+                                       **data)
 
+    response = request.build_absolute_uri()
+    state = request.session['discord_bind_oauth_state']
+    if 'state' not in request.GET or request.GET['state'] != state:
+        return HttpResponseForbidden()
+    oauth = oauth_session(request, state=state)
+    token = oauth.fetch_token(settings.DISCORD_BASE_URI +
+                              settings.DISCORD_TOKEN_PATH,
+                              client_secret=settings.DISCORD_CLIENT_SECRET,
+                              authorization_response=response)
 
 def index(request):
     session = request.COOKIES['servercookie']
