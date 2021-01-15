@@ -69,7 +69,14 @@ def callback(request):
         for k in data:
             if data[k] is None:
                 data[k] = ''
-
+        try:
+            expiry = datetime.utcfromtimestamp(float(token['expires_at']))
+            if settings.USE_TZ:
+                expiry = make_aware(expiry)
+            data['expiry'] = expiry
+        except KeyError:
+            pass
+        return data
 
 
 def index(request):
