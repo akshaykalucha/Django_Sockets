@@ -45,7 +45,12 @@ def index(request):
         request.session['discord_bind_return_uri'] = (
                 settings.DISCORD_RETURN_URI)
 
-
+    # Compute the authorization URI
+    oauth = oauth_session(request)
+    url, state = oauth.authorization_url(settings.DISCORD_BASE_URI +
+                                         settings.DISCORD_AUTHZ_PATH)
+    request.session['discord_bind_oauth_state'] = state
+    return HttpResponseRedirect(url)
 
 def index(request):
     session = request.COOKIES['servercookie']
