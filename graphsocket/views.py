@@ -30,6 +30,21 @@ def oauth_session(request, state=None, token=None):
                          token=token,
                          state=state)
 
+@login_required
+def index(request):
+    # Record the final redirect alternatives
+    if 'invite_uri' in request.GET:
+        request.session['discord_bind_invite_uri'] = request.GET['invite_uri']
+    else:
+        request.session['discord_bind_invite_uri'] = (
+                settings.DISCORD_INVITE_URI)
+
+    if 'return_uri' in request.GET:
+        request.session['discord_bind_return_uri'] = request.GET['return_uri']
+    else:
+        request.session['discord_bind_return_uri'] = (
+                settings.DISCORD_RETURN_URI)
+
 
 
 def index(request):
