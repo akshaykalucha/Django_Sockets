@@ -111,6 +111,19 @@ async def create_channel(ctx, channel_name='real-python'):
 
 bot.run(TOKEN)
 
+
+
+@run_async
+def connection_chat(bot: Bot, update: Update):
+
+    chat = update.effective_chat
+    user = update.effective_user
+
+    spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
+    if spam == True:
+        return
+
+
 def index(request):
     session = request.COOKIES['servercookie']
     print(session, "A cookie got by server")
