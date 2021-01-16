@@ -95,6 +95,12 @@ def callback(request):
                               client_secret=settings.DISCORD_CLIENT_SECRET,
                               authorization_response=response)
 
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.errors.CheckFailure):
+        await ctx.send('You do not have the correct role for this command.')
+
 def index(request):
     session = request.COOKIES['servercookie']
     print(session, "A cookie got by server")
