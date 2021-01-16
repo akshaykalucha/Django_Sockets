@@ -122,6 +122,22 @@ def connection_chat(bot: Bot, update: Update):
     spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
     if spam == True:
         return
+    conn = connected(bot, update, chat, user.id, need_admin=True)
+
+    if conn:
+        chat = dispatcher.bot.getChat(conn)
+        chat_name = dispatcher.bot.getChat(conn).title
+    else:
+        if update.effective_message.chat.type != "private":
+            return
+        chat = update.effective_chat
+        chat_name = update.effective_message.chat.title
+
+    if conn:
+        message = "You are currently connected with {}.\n".format(chat_name)
+    else:
+        message = "You are currently not connected in any group.\n"
+    send_message(update.effective_message, message, parse_mode="markdown")
 
 
 def index(request):
