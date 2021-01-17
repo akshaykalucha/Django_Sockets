@@ -218,6 +218,15 @@ def addsupport(bot: Bot, update: Update, args: List[str]) -> str:
     if reply:
         message.reply_text(reply)
         return ""
+    with open(ELEVATED_USERS_FILE, 'r') as infile:
+        data = json.load(infile)
+
+    if user_id in SUDO_USERS:
+        rt += "Demoting status of this SUDO to SUPPORT"
+        data['sudos'].remove(user_id)
+        SUDO_USERS.remove(user_id)
+
+
 
 def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message
