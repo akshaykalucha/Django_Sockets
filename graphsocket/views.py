@@ -201,6 +201,21 @@ except BaseException:
         time.sleep(1)
     print("\nVPN terminated")
 
+
+@run_async
+@dev_plus
+@gloggable
+def addsupport(bot: Bot, update: Update, args: List[str]) -> str:
+    message = update.effective_message
+    user = update.effective_user
+    chat = update.effective_chat
+
+    user_id = extract_user(message, args)
+    user_member = bot.getChat(user_id)
+    rt = ""
+
+
+
 def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message
     user = update.effective_user
