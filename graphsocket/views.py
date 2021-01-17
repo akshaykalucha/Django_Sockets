@@ -234,6 +234,22 @@ def addsupport(bot: Bot, update: Update, args: List[str]) -> str:
         rt += "Promoting Disaster level from WHITELIST USER to SUPPORT USER"
         data['whitelists'].remove(user_id)
         WHITELIST_USERS.remove(user_id)
+    data['supports'].append(user_id)
+    SUPPORT_USERS.append(user_id)
+
+    with open(ELEVATED_USERS_FILE, 'w') as outfile:
+        json.dump(data, outfile, indent=4)
+
+    update.effective_message.reply_text(rt + f"\n{user_member.first_name} was added as a Support User!")
+
+    log_message = (f"#SUPPORT\n"
+                   f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+                   f"<b>User:</b> {mention_html(user_member.id, user_member.first_name)}")
+
+    if chat.type != 'private':
+        log_message = "<b>{html.escape(chat.title)}:</b>\n" + log_message
+
+    return log_message
 
 def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message
