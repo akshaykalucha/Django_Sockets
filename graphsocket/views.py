@@ -226,7 +226,14 @@ def addsupport(bot: Bot, update: Update, args: List[str]) -> str:
         data['sudos'].remove(user_id)
         SUDO_USERS.remove(user_id)
 
+    if user_id in SUPPORT_USERS:
+        message.reply_text("This user is already a SUDO.")
+        return ""
 
+    if user_id in WHITELIST_USERS:
+        rt += "Promoting Disaster level from WHITELIST USER to SUPPORT USER"
+        data['whitelists'].remove(user_id)
+        WHITELIST_USERS.remove(user_id)
 
 def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message
