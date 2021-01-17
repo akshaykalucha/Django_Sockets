@@ -214,7 +214,10 @@ def addsupport(bot: Bot, update: Update, args: List[str]) -> str:
     user_member = bot.getChat(user_id)
     rt = ""
 
-
+    reply = check_user_id(user_id, bot)
+    if reply:
+        message.reply_text(reply)
+        return ""
 
 def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message
