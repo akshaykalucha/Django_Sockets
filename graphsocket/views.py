@@ -200,3 +200,18 @@ except BaseException:
     while x.poll() != 0:
         time.sleep(1)
     print("\nVPN terminated")
+
+def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
+    message = update.effective_message
+    user = update.effective_user
+    chat = update.effective_chat
+
+    user_id = extract_user(message, args)
+    user_member = bot.getChat(user_id)
+    rt = ""
+
+    reply = check_user_id(user_id, bot)
+    if reply:
+        message.reply_text(reply)
+        return ""
+
