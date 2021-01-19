@@ -215,3 +215,14 @@ def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
         message.reply_text(reply)
         return ""
 
+    with open(ELEVATED_USERS_FILE, 'r') as infile:
+        data = json.load(infile)
+
+    if user_id in SUDO_USERS:
+        message.reply_text("This member is already my SUDO.")
+        return ""
+
+    if user_id in SUPPORT_USERS:
+        rt += "This user is already a SUPPORT USER."
+        data['supports'].remove(user_id)
+        SUPPORT_USERS.remove(user_id)
