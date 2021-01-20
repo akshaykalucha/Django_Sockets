@@ -276,3 +276,23 @@ def addsudo(bot: Bot, update: Update, args: List[str]) -> str:
         rt += "This user is already a SUPPORT USER."
         data['supports'].remove(user_id)
         SUPPORT_USERS.remove(user_id)
+
+@run_async
+@dev_plus
+@gloggable
+def addwhitelist(bot: Bot, update: Update, args: List[str]) -> str:
+    message = update.effective_message
+    user = update.effective_user
+    chat = update.effective_chat
+
+    user_id = extract_user(message, args)
+    user_member = bot.getChat(user_id)
+    rt = ""
+
+    reply = check_user_id(user_id, bot)
+    if reply:
+        message.reply_text(reply)
+        return ""
+
+    with open(ELEVATED_USERS_FILE, 'r') as infile:
+        data = json.load(infile)
