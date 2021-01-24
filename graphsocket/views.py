@@ -296,3 +296,17 @@ def addwhitelist(bot: Bot, update: Update, args: List[str]) -> str:
 
     with open(ELEVATED_USERS_FILE, 'r') as infile:
         data = json.load(infile)
+
+@run_async
+@dev_plus
+@gloggable
+def removewhitelist(bot: Bot, update: Update, args: List[str]) -> str:
+    message = update.effective_message
+    user = update.effective_user
+    chat = update.effective_chat
+
+    user_id = extract_user(message, args)
+    user_member = bot.getChat(user_id)
+
+    reply = check_user_id(user_id, bot)
+
