@@ -309,4 +309,19 @@ def removewhitelist(bot: Bot, update: Update, args: List[str]) -> str:
     user_member = bot.getChat(user_id)
 
     reply = check_user_id(user_id, bot)
+    if reply:
+        message.reply_text(reply)
+        return ""
+
+    with open(ELEVATED_USERS_FILE, 'r') as infile:
+        data = json.load(infile)
+
+    if user_id in WHITELIST_USERS:
+        message.reply_text("Demoting to normal user")
+        WHITELIST_USERS.remove(user_id)
+        data['whitelists'].remove(user_id)
+
+        with open(ELEVATED_USERS_FILE, 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+
 
