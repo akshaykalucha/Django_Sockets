@@ -324,4 +324,14 @@ def removewhitelist(bot: Bot, update: Update, args: List[str]) -> str:
         with open(ELEVATED_USERS_FILE, 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
+        log_message = (f"#UNWHITELIST\n"
+                       f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+                       f"<b>User:</b> {mention_html(user_member.id, user_member.first_name)}")
 
+        if chat.type != 'private':
+            log_message = f"<b>{html.escape(chat.title)}:</b>\n" + log_message
+
+        return log_message
+    else:
+        message.reply_text("This user is not a whitelist!")
+        return ""
